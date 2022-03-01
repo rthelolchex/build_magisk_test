@@ -1,0 +1,28 @@
+diff --git a/native/jni/core/bootstages.cpp b/native/jni/core/bootstages.cpp
+index 336a4b0e..4a043aa5 100644
+--- a/native/jni/core/bootstages.cpp
++++ b/native/jni/core/bootstages.cpp
+@@ -289,6 +289,10 @@ void post_fs_data(int client) {
+         }
+     }
+ 
++    if (MAGISKTMP != "/sbin") {
++        exec_command_sync("/system/bin/mount", "--bind", MAGISKTMP.data(), "/product/bin");
++    }
++
+     if (!magisk_env()) {
+         LOGE("* Magisk environment incomplete, abort\n");
+         goto early_abort;
+diff --git a/native/jni/core/restorecon.cpp b/native/jni/core/restorecon.cpp
+index f4454dfd..ada45bab 100644
+--- a/native/jni/core/restorecon.cpp
++++ b/native/jni/core/restorecon.cpp
+@@ -90,7 +90,7 @@ void restore_tmpcon() {
+     if (MAGISKTMP == "/sbin")
+         setfilecon(MAGISKTMP.data(), ROOT_CON);
+     else
+-        chmod(MAGISKTMP.data(), 0700);
++        chmod(MAGISKTMP.data(), 0755);
+ 
+     auto dir = xopen_dir(MAGISKTMP.data());
+     int dfd = dirfd(dir.get());
